@@ -40,6 +40,7 @@ export default function ConnectFourGame () {
   const [winner, setWinner] = useState<Player | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>(null);
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
+  const [showInstructions, setShowInstructions] = useState<boolean>(false);
   
   // UI state
   const [message, setMessage] = useState<string>("Welcome to Connect Four!");
@@ -624,6 +625,87 @@ export default function ConnectFourGame () {
   // Main game board
   return (
     <div className={`flex flex-col items-center justify-center min-h-screen ${COLORS.background} p-4`}>
+      {/* Instructions Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <button
+          onClick={() => setShowInstructions(true)}
+          className="w-10 h-10 rounded-full bg-gray-800/50 hover:bg-gray-700/50 text-white flex items-center justify-center transition-all"
+          aria-label="Show instructions"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Instructions Modal */}
+      {showInstructions && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div 
+            className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 max-w-2xl w-full relative"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <button
+              onClick={() => setShowInstructions(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              aria-label="Close instructions"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">How to Play Connect Four</h2>
+            
+            <div className="space-y-4 text-gray-600">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Objective</h3>
+                <p>Be the first player to connect four of your colored checkers in a row, either horizontally, vertically, or diagonally.</p>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Game Rules</h3>
+                <ul className="list-disc list-inside space-y-2">
+                  <li>Players take turns dropping their colored checkers into one of the seven columns.</li>
+                  <li>The checker will fall to the lowest available position in the chosen column.</li>
+                  <li>The game ends when either:
+                    <ul className="list-disc list-inside ml-6 mt-1">
+                      <li>A player connects four checkers in a row (horizontally, vertically, or diagonally)</li>
+                      <li>All positions are filled (resulting in a draw)</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">How to Play</h3>
+                <ul className="list-disc list-inside space-y-2">
+                  <li>Click on any column to drop your checker</li>
+                  <li>Hover over a column to preview where your checker will fall</li>
+                  <li>Plan your moves to both create your own connections and block your opponent</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Game Modes</h3>
+                <ul className="list-disc list-inside space-y-2">
+                  <li><span className="font-medium">Player vs Player:</span> Play against a friend on the same device</li>
+                  <li><span className="font-medium">Player vs AI:</span> Challenge the computer with three difficulty levels:
+                    <ul className="list-disc list-inside ml-6 mt-1">
+                      <li>Easy - For beginners</li>
+                      <li>Medium - For casual players</li>
+                      <li>Hard - For experienced players</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       <header className="w-full max-w-4xl text-center mb-6">
         <motion.h1 
           className="text-4xl font-bold text-white mb-2 drop-shadow-lg"
