@@ -150,10 +150,166 @@ class ConnectFourAI:
         return random.choice(valid_moves)
     
     def minimax_move(self, game):
-        """Use minimax algorithm to find the best move (simplified version)."""
-        # For now, we'll use the smart move as a placeholder
-        # Implementing a full minimax with alpha-beta pruning would be more complex
-        return self.smart_move(game)
+        """Use minimax algorithm with alpha-beta pruning to find the best move."""
+        valid_moves = game.get_valid_moves()
+        if not valid_moves:
+            return None
+            
+        best_score = float('-inf')
+        best_move = random.choice(valid_moves)
+        depth = 5  # Look 5 moves ahead
+        
+        # Try each valid move and pick the one with the best score
+        for col in valid_moves:
+            # Create a copy of the game to simulate moves
+            temp_game = ConnectFour()
+            temp_game.board = game.get_board_copy()
+            temp_game.current_player = self.piece
+            
+            # Make the move in our simulated game
+            if temp_game.make_move(col):
+                # If it's an immediate win, choose it
+                if temp_game.winner == self.piece:
+                    return col
+                    
+                # Otherwise, evaluate the move using minimax
+                score = self._minimax(temp_game, depth-1, float('-inf'), float('inf'), False)
+                
+                # Update our best move if this is better
+                if score > best_score:
+                    best_score = score
+                    best_move = col
+        
+        return best_move
+    
+    def _minimax(self, game, depth, alpha, beta, maximizing_player):
+        """
+        Recursive minimax function with alpha-beta pruning.
+        
+        Args:
+            game: Current game state
+            depth: How many moves to look ahead
+            alpha: Alpha value for pruning
+            beta: Beta value for pruning
+            maximizing_player: True if it's the AI's turn, False otherwise
+            
+        Returns:
+            The best score for the current position
+        """
+        # Base cases: terminal state or maximum depth reached
+        if game.game_over or depth == 0:
+            return self._evaluate_board(game)
+        
+        valid_moves = game.get_valid_moves()
+        if not valid_moves:
+            return 0  # No valid moves, it's a draw
+            
+        if maximizing_player:
+            # AI's turn (maximizing)
+            max_eval = float('-inf')
+            for col in valid_moves:
+                # Create a temporary game to simulate the move
+                temp_game = ConnectFour()
+                temp_game.board = game.get_board_copy()
+                temp_game.current_player = self.piece
+                
+                if temp_game.make_move(col):
+                    eval = self._minimax(temp_game, depth-1, alpha, beta, False)
+                    max_eval = max(max_eval, eval)
+                    alpha = max(alpha, eval)
+                    if beta <= alpha:
+                        break  # Beta cutoff
+            return max_eval
+        else:
+            # Opponent's turn (minimizing)
+            min_eval = float('inf')
+            for col in valid_moves:
+                # Create a temporary game to simulate the move
+                temp_game = ConnectFour()
+                temp_game.board = game.get_board_copy()
+                temp_game.current_player = self.opponent_piece
+                
+                if temp_game.make_move(col):
+                    eval = self._minimax(temp_game, depth-1, alpha, beta, True)
+                    min_eval = min(min_eval, eval)
+                    beta = min(beta, eval)
+                    if beta <= alpha:
+                        break  # Alpha cutoff
+            return min_eval
+    
+    def _evaluate_board(self, game):
+        """
+        Evaluate the current board state.
+        Positive scores favor the AI, negative scores favor the opponent.
+        """
+        # Check for terminal states first (highest priority)
+        if game.winner == self.piece:
+            return 1000  # AI wins
+        elif game.winner == self.opponent_piece:
+            return -1000  # Opponent wins
+        elif game.game_over:
+            return 0  # Draw
+            
+        # Evaluate the board position using a heuristic
+        score = 0
+        
+        # Check for potential winning sequences
+        score += self._count_potential_wins(game, self.piece, 3) * 10  # 3-in-a-row
+        score += self._count_potential_wins(game, self.piece, 2) * 3   # 2-in-a-row
+        score -= self._count_potential_wins(game, self.opponent_piece, 3) * 15  # Block opponent 3-in-a-row
+        score -= self._count_potential_wins(game, self.opponent_piece, 2) * 3   # Block opponent 2-in-a-row
+        
+        # Favor center columns
+        center_col = game.cols // 2
+        for row in range(game.rows):
+            if game.board[row][center_col] == self.piece:
+                score += 2
+            elif game.board[row][center_col] == self.opponent_piece:
+                score -= 2
+        
+        return score
+    
+    def _count_potential_wins(self, game, piece, length):
+        """
+        Count how many potential winning lines of the given length exist.
+        A potential winning line is a sequence that can be extended to 4 in a row.
+        """
+        count = 0
+        
+        # Check horizontal lines
+        for row in range(game.rows):
+            for col in range(game.cols - 3):
+                window = [game.board[row][col+i] for i in range(4)]
+                count += self._evaluate_window(window, piece, length)
+        
+        # Check vertical lines
+        for col in range(game.cols):
+            for row in range(game.rows - 3):
+                window = [game.board[row+i][col] for i in range(4)]
+                count += self._evaluate_window(window, piece, length)
+        
+        # Check diagonal lines (positive slope)
+        for row in range(game.rows - 3):
+            for col in range(game.cols - 3):
+                window = [game.board[row+i][col+i] for i in range(4)]
+                count += self._evaluate_window(window, piece, length)
+        
+        # Check diagonal lines (negative slope)
+        for row in range(3, game.rows):
+            for col in range(game.cols - 3):
+                window = [game.board[row-i][col+i] for i in range(4)]
+                count += self._evaluate_window(window, piece, length)
+        
+        return count
+    
+    def _evaluate_window(self, window, piece, length):
+        """
+        Evaluate a window of 4 cells for potential wins.
+        Return 1 if the window has 'length' pieces of the given type and the rest are empty.
+        """
+        if window.count(piece) == length and window.count(' ') == 4 - length:
+            return 1
+        return 0
 
 
 def main():
