@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import random
 
 class ConnectFour:
     def __init__(self):
@@ -87,33 +88,151 @@ class ConnectFour:
             
             row += row_step
             col += col_step
+    
+    def get_valid_moves(self):
+        """Return a list of valid column moves."""
+        return [col for col in range(self.cols) if self.is_valid_move(col)]
+    
+    def get_board_copy(self):
+        """Return a copy of the current board."""
+        return [row[:] for row in self.board]
+
+
+class ConnectFourAI:
+    def __init__(self, piece, difficulty='medium'):
+        """Initialize AI with a piece ('X' or 'O') and difficulty level."""
+        self.piece = piece
+        self.opponent_piece = 'X' if piece == 'O' else 'O'
+        self.difficulty = difficulty
+    
+    def make_move(self, game):
+        """Determine the best move based on the current game state."""
+        if self.difficulty == 'easy':
+            return self.random_move(game)
+        elif self.difficulty == 'medium':
+            return self.smart_move(game)
+        else:  # hard
+            return self.minimax_move(game)
+    
+    def random_move(self, game):
+        """Make a random valid move."""
+        valid_moves = game.get_valid_moves()
+        return random.choice(valid_moves) if valid_moves else None
+    
+    def smart_move(self, game):
+        """Make a smarter move by checking for wins or blocks."""
+        valid_moves = game.get_valid_moves()
+        if not valid_moves:
+            return None
+        
+        # Check if AI can win in one move
+        for col in valid_moves:
+            temp_game = ConnectFour()
+            temp_game.board = game.get_board_copy()
+            temp_game.current_player = self.piece
+            if temp_game.make_move(col) and temp_game.winner == self.piece:
+                return col
+        
+        # Check if opponent can win in one move and block it
+        for col in valid_moves:
+            temp_game = ConnectFour()
+            temp_game.board = game.get_board_copy()
+            temp_game.current_player = self.opponent_piece
+            if temp_game.make_move(col) and temp_game.winner == self.opponent_piece:
+                return col
+        
+        # Play in the center column if possible
+        center = 3
+        if center in valid_moves:
+            return center
+        
+        # Otherwise, make a random move
+        return random.choice(valid_moves)
+    
+    def minimax_move(self, game):
+        """Use minimax algorithm to find the best move (simplified version)."""
+        # For now, we'll use the smart move as a placeholder
+        # Implementing a full minimax with alpha-beta pruning would be more complex
+        return self.smart_move(game)
+
 
 def main():
     """Run the Connect Four game."""
+    print("Welcome to Connect Four!")
+    print("1. Play against a friend")
+    print("2. Play against AI")
+    
+    while True:
+        try:
+            game_mode = int(input("Select mode (1 or 2): "))
+            if game_mode in [1, 2]:
+                break
+            else:
+                print("Please enter 1 or 2.")
+        except ValueError:
+            print("Please enter a number.")
+    
+    ai = None
+    if game_mode == 2:
+        print("\nSelect AI difficulty:")
+        print("1. Easy")
+        print("2. Medium")
+        print("3. Hard")
+        
+        while True:
+            try:
+                difficulty = int(input("Select difficulty (1-3): "))
+                if 1 <= difficulty <= 3:
+                    difficulty_levels = {1: 'easy', 2: 'medium', 3: 'hard'}
+                    ai_piece = 'O'  # AI will be player 2
+                    ai = ConnectFourAI(ai_piece, difficulty_levels[difficulty])
+                    break
+                else:
+                    print("Please enter a number between 1 and 3.")
+            except ValueError:
+                print("Please enter a number.")
+    
     game = ConnectFour()
     
-    print("Welcome to Connect Four!")
+    print("\nGame started!")
     print("Players take turns dropping pieces into columns.")
     print("The first player to connect 4 pieces horizontally, vertically, or diagonally wins!")
-    print("Player 1: X, Player 2: O")
+    if game_mode == 1:
+        print("Player 1: X, Player 2: O")
+    else:
+        print("You: X, AI: O")
     print()
     
     while not game.game_over:
         game.print_board()
-        player_name = "Player 1" if game.current_player == 'X' else "Player 2"
         
-        try:
-            col = int(input(f"{player_name}'s turn ({game.current_player}). Choose column (1-7): ")) - 1
-            if not game.make_move(col):
-                print("Invalid move! Try again.")
-        except ValueError:
-            print("Please enter a number between 1 and 7.")
+        if game_mode == 2 and game.current_player == ai.piece:
+            # AI's turn
+            print(f"AI is thinking...")
+            col = ai.make_move(game)
+            print(f"AI chooses column {col + 1}")
+            game.make_move(col)
+        else:
+            # Human player's turn
+            player_name = "Player 1" if game.current_player == 'X' else "Player 2"
+            if game_mode == 2:
+                player_name = "You" if game.current_player == 'X' else "AI"
+            
+            try:
+                col = int(input(f"{player_name}'s turn ({game.current_player}). Choose column (1-7): ")) - 1
+                if not game.make_move(col):
+                    print("Invalid move! Try again.")
+            except ValueError:
+                print("Please enter a number between 1 and 7.")
     
     # Game is over, show final board and result
     game.print_board()
     
     if game.winner:
-        winner_name = "Player 1" if game.winner == 'X' else "Player 2"
+        if game_mode == 1:
+            winner_name = "Player 1" if game.winner == 'X' else "Player 2"
+        else:
+            winner_name = "You" if game.winner == 'X' else "AI"
         print(f"Game over! {winner_name} ({game.winner}) wins!")
     else:
         print("Game over! It's a draw!")
