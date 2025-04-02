@@ -558,7 +558,7 @@ export default function ConnectFourGame () {
           
           <div className="flex flex-col gap-5">
             <motion.button
-              className="bg-gradient-to-r from-green-400 to-green-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
+              className="cursor-pointer bg-gradient-to-r from-green-400 to-green-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
               onClick={() => selectDifficulty(1)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -574,7 +574,7 @@ export default function ConnectFourGame () {
             </motion.button>
             
             <motion.button
-              className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
+              className="cursor-pointer bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
               onClick={() => selectDifficulty(2)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -590,7 +590,7 @@ export default function ConnectFourGame () {
             </motion.button>
             
             <motion.button
-              className="bg-gradient-to-r from-red-400 to-red-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
+              className="cursor-pointer bg-gradient-to-r from-red-400 to-red-600 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between shadow-md"
               onClick={() => selectDifficulty(3)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -606,7 +606,7 @@ export default function ConnectFourGame () {
             </motion.button>
             
             <motion.button
-              className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg mt-4 flex items-center justify-center gap-2 shadow-md"
+              className="cursor-pointer bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg mt-4 flex items-center justify-center gap-2 shadow-md"
               onClick={() => setGameMode(null)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -840,7 +840,7 @@ export default function ConnectFourGame () {
             <>
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-8 h-8 rounded-full ${winner === 'X' ? COLORS.playerX : COLORS.playerO}`}></div>
-                <span>{winner === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} wins!</span>
+                <span>{winner === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} {winner === 'X' && gameMode !== 1 ? "win!" : "wins!"}</span>
               </div>
               <div className="text-sm text-gray-600">Click &quot;New Game&quot; to play again</div>
             </>
