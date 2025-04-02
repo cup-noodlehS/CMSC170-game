@@ -7,3 +7,10 @@
 ```
 python connect_four.py
 ```
+
+## Run game on website
+```
+npm install
+cd frontend
+npm run dev
+```
