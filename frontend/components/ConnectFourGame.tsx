@@ -369,10 +369,10 @@ export default function ConnectFourGame () {
     return (
       <div
         key={col}
-        className="flex flex-col-reverse items-center cursor-pointer hover:bg-blue-100"
+        className="flex flex-col items-center cursor-pointer hover:bg-blue-100"
         onClick={() => handleColumnClick(col)}
       >
-        {Array.from({ length: ROWS }, (_, row) => renderCell(row, col))}
+        {Array.from({ length: ROWS }, (_, i) => renderCell(i, col))}
       </div>
     );
   };
