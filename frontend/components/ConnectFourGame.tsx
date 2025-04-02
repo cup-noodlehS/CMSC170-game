@@ -499,7 +499,7 @@ export default function ConnectFourGame () {
           
           <div className="flex flex-col gap-4">
             <motion.button
-              className={`${COLORS.primary} ${COLORS.primaryHover} ${COLORS.text} font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-all shadow-md`}
+              className={`${COLORS.primary} ${COLORS.primaryHover} ${COLORS.text} cursor-pointer font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-all shadow-md`}
               onClick={() => startGame(1)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -516,7 +516,7 @@ export default function ConnectFourGame () {
             </motion.button>
             
             <motion.button
-              className={`${COLORS.secondary} ${COLORS.secondaryHover} ${COLORS.text} font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-all shadow-md`}
+              className={`${COLORS.secondary} ${COLORS.secondaryHover} ${COLORS.text} cursor-pointer font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-all shadow-md`}
               onClick={() => setGameMode('ai-select')}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -793,7 +793,7 @@ export default function ConnectFourGame () {
         {/* Game controls */}
         <div className="mt-8 flex gap-4 justify-center">
           <motion.button
-            className={`${COLORS.success} ${COLORS.successHover} text-white font-bold py-3 px-5 rounded-lg shadow-md flex items-center gap-2`}
+            className={`${COLORS.success} ${COLORS.successHover} cursor-pointer text-white font-bold py-3 px-5 rounded-lg shadow-md flex items-center gap-2`}
             onClick={resetGame}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -805,7 +805,7 @@ export default function ConnectFourGame () {
           </motion.button>
           
           <motion.button
-            className={`${COLORS.neutral} ${COLORS.neutralHover} text-white font-bold py-3 px-5 rounded-lg shadow-md flex items-center gap-2`}
+            className={`${COLORS.neutral} ${COLORS.neutralHover} cursor-pointer text-white font-bold py-3 px-5 rounded-lg shadow-md flex items-center gap-2`}
             onClick={() => setGameMode(null)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
