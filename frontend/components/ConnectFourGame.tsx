@@ -674,30 +674,38 @@ export default function ConnectFourGame () {
         )}
         
         {/* Game board with drop area */}
-        <div className="bg-blue-800 p-3 rounded-xl shadow-lg border-4 border-blue-900">
-          {/* Drop area - only visible when game is active */}
-          {!gameOver && (
-            <div className="h-16 flex mb-1">
-              {Array.from({ length: COLS }, (_, col) => (
-                <div key={`drop-${col}`} className="w-16 flex justify-center items-center">
-                  {isValidMove(col) && (
-                    <motion.div 
-                      className={`w-10 h-10 rounded-full opacity-0 group-hover:opacity-100 
-                                ${currentPlayer === 'X' ? COLORS.playerX : COLORS.playerO}`}
-                      initial={false}
-                      whileHover={{ opacity: 0.5, y: [0, -5, 0] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                    />
-                  )}
-                </div>
-              ))}
+        <div className="relative">
+          <div className="bg-blue-800 p-3 rounded-xl shadow-lg border-4 border-blue-900">
+            {/* Drop area - only visible when game is active */}
+            {!gameOver && (
+              <div className="h-16 flex mb-1">
+                {Array.from({ length: COLS }, (_, col) => (
+                  <div key={`drop-${col}`} className="w-16 flex justify-center items-center">
+                    {isValidMove(col) && (
+                      <motion.div 
+                        className={`w-10 h-10 rounded-full opacity-0 group-hover:opacity-100 
+                                  ${currentPlayer === 'X' ? COLORS.playerX : COLORS.playerO}`}
+                        initial={false}
+                        whileHover={{ opacity: 0.5, y: [0, -5, 0] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Main board grid */}
+            <div className="flex bg-blue-700 rounded-lg p-1">
+              {Array.from({ length: COLS }, (_, col) => renderColumn(col))}
             </div>
-          )}
-          
-          {/* Main board grid */}
-          <div className="flex bg-blue-700 rounded-lg p-1">
-            {Array.from({ length: COLS }, (_, col) => renderColumn(col))}
           </div>
+          
+          {/* Left stand */}
+          <div className="absolute -bottom-4 -left-6 w-10 h-14 bg-blue-800 border-4 border-blue-900 rounded-lg"></div>
+          
+          {/* Right stand */}
+          <div className="absolute -bottom-4 -right-6 w-10 h-14 bg-blue-800 border-4 border-blue-900 rounded-lg"></div>
         </div>
         
         {/* Game controls */}
