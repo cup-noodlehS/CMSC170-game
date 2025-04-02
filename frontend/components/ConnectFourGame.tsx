@@ -55,14 +55,14 @@ export default function ConnectFourGame () {
     setGameOver(false);
     setWinner(null);
     setHighlightWinCells([]);
-    setMessage(gameMode === 1 ? "Player 1's turn (X)" : "Your turn (X)");
+    setMessage(gameMode === 1 ? "Player 1's turn" : "Your turn");
   }, [gameMode]);
 
   // Initialize game based on selected mode
   const startGame = (mode: GameMode) => {
     setGameMode(mode);
     resetGame();
-    setMessage(mode === 1 ? "Player 1's turn (X)" : "Your turn (X)");
+    setMessage(mode === 1 ? "Player 1's turn" : "Your turn");
   };
 
   // Select AI difficulty
@@ -111,7 +111,7 @@ export default function ConnectFourGame () {
       setGameOver(true);
       setWinner(currentPlayer);
       setHighlightWinCells(winningCells);
-      setMessage(`Game over! ${currentPlayer === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} (${currentPlayer}) wins!`);
+      setMessage(`Game over! ${currentPlayer === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} wins!`);
       return true;
     }
     
@@ -124,7 +124,7 @@ export default function ConnectFourGame () {
     
     // Switch player
     setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-    setMessage(`${currentPlayer === 'X' ? (gameMode === 1 ? "Player 2" : "AI") : (gameMode === 1 ? "Player 1" : "You")}'s turn (${currentPlayer === 'X' ? 'O' : 'X'})`);
+    setMessage(`${currentPlayer === 'X' ? (gameMode === 1 ? "Player 2's" : "AI's") : (gameMode === 1 ? "Player 1's" : "Your")} turn`);
     
     // Reset animation flag after a short delay
     setTimeout(() => {
