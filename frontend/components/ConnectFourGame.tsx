@@ -1,22 +1,27 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 
+type GameMode = 1 | 2 | 'ai-select' | null;
+type Player = 'X' | 'O' | ' ';
+type DifficultyLevel = 'easy' | 'medium' | 'hard';
+type Board = Player[][];
+
 export default function ConnectFourGame () {
   const ROWS = 6;
   const COLS = 7;
   
-  const [board, setBoard] = useState(Array(ROWS).fill().map(() => Array(COLS).fill(' ')));
-  const [currentPlayer, setCurrentPlayer] = useState('X');
-  const [gameOver, setGameOver] = useState(false);
-  const [winner, setWinner] = useState(null);
-  const [gameMode, setGameMode] = useState(null);
-  const [difficulty, setDifficulty] = useState('medium');
-  const [message, setMessage] = useState("Welcome to Connect Four!");
-  const [aiThinking, setAiThinking] = useState(false);
+  const [board, setBoard] = useState<Board>(Array(ROWS).fill(null).map(() => Array(COLS).fill(' ')));
+  const [currentPlayer, setCurrentPlayer] = useState<Player>('X');
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [winner, setWinner] = useState<Player | null>(null);
+  const [gameMode, setGameMode] = useState<GameMode>(null);
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
+  const [message, setMessage] = useState<string>("Welcome to Connect Four!");
+  const [aiThinking, setAiThinking] = useState<boolean>(false);
 
   // Reset the game
   const resetGame = () => {
-    setBoard(Array(ROWS).fill().map(() => Array(COLS).fill(' ')));
+    setBoard(Array(ROWS).fill(null).map(() => Array(COLS).fill(' ')));
     setCurrentPlayer('X');
     setGameOver(false);
     setWinner(null);
@@ -24,32 +29,32 @@ export default function ConnectFourGame () {
   };
 
   // Initialize game based on selected mode
-  const startGame = (mode) => {
+  const startGame = (mode: GameMode) => {
     setGameMode(mode);
     resetGame();
     setMessage(mode === 1 ? "Player 1's turn (X)" : "Your turn (X)");
   };
 
   // Select AI difficulty
-  const selectDifficulty = (level) => {
-    const difficultyLevels = {1: 'easy', 2: 'medium', 3: 'hard'};
+  const selectDifficulty = (level: 1 | 2 | 3) => {
+    const difficultyLevels: Record<number, DifficultyLevel> = {1: 'easy', 2: 'medium', 3: 'hard'};
     setDifficulty(difficultyLevels[level]);
     startGame(2);
   };
 
   // Check if move is valid
-  const isValidMove = (col) => {
+  const isValidMove = (col: number): boolean => {
     if (col < 0 || col >= COLS) return false;
     return board[0][col] === ' ';
   };
 
   // Get all valid moves
-  const getValidMoves = () => {
+  const getValidMoves = (): number[] => {
     return Array.from({length: COLS}, (_, i) => i).filter(col => isValidMove(col));
   };
 
   // Make a move
-  const makeMove = (col) => {
+  const makeMove = (col: number): boolean => {
     if (!isValidMove(col) || gameOver) return false;
     
     const newBoard = board.map(row => [...row]);
@@ -86,12 +91,12 @@ export default function ConnectFourGame () {
   };
 
   // Check if board is full (draw)
-  const isBoardFull = (board) => {
+  const isBoardFull = (board: Board): boolean => {
     return board[0].every(cell => cell !== ' ');
   };
 
   // Check if the last move resulted in a win
-  const checkWin = (row, col, board) => {
+  const checkWin = (row: number, col: number, board: Board): boolean => {
     const piece = board[row][col];
     
     // Check directions: horizontal, vertical, diagonal down-right, diagonal down-left
@@ -145,13 +150,15 @@ export default function ConnectFourGame () {
     // Use setTimeout to create a small delay for a better UX
     setTimeout(() => {
       const col = findBestMove();
-      makeMove(col);
+      if (col !== null) {
+        makeMove(col);
+      }
       setAiThinking(false);
     }, 700);
   };
 
   // AI move based on difficulty
-  const findBestMove = () => {
+  const findBestMove = (): number | null => {
     const validMoves = getValidMoves();
     if (validMoves.length === 0) return null;
     
@@ -168,13 +175,14 @@ export default function ConnectFourGame () {
   };
 
   // Random AI move
-  const randomMove = () => {
+  const randomMove = (): number | null => {
     const validMoves = getValidMoves();
+    if (validMoves.length === 0) return null;
     return validMoves[Math.floor(Math.random() * validMoves.length)];
   };
 
   // Smart AI move (looks for immediate wins or blocks)
-  const smartMove = () => {
+  const smartMove = (): number | null => {
     const validMoves = getValidMoves();
     if (validMoves.length === 0) return null;
     
@@ -221,7 +229,7 @@ export default function ConnectFourGame () {
   };
 
   // Minimax AI move (simplified for React performance)
-  const minimaxMove = () => {
+  const minimaxMove = (): number | null => {
     const validMoves = getValidMoves();
     if (validMoves.length === 0) return null;
     
@@ -262,7 +270,7 @@ export default function ConnectFourGame () {
   };
 
   // Evaluate board position for minimax
-  const evaluateBoard = (board) => {
+  const evaluateBoard = (board: Board): number => {
     let score = 0;
     
     // Horizontal evaluation
@@ -309,7 +317,7 @@ export default function ConnectFourGame () {
   };
 
   // Evaluate a window of 4 cells
-  const evaluateWindow = (window) => {
+  const evaluateWindow = (window: Player[]): number => {
     const countO = window.filter(cell => cell === 'O').length;
     const countX = window.filter(cell => cell === 'X').length;
     const countEmpty = window.filter(cell => cell === ' ').length;
@@ -327,7 +335,7 @@ export default function ConnectFourGame () {
   };
 
   // Handle player's move when clicking a column
-  const handleColumnClick = (col) => {
+  const handleColumnClick = (col: number): void => {
     if (gameOver || (gameMode === 2 && currentPlayer === 'O') || aiThinking) return;
     
     makeMove(col);
@@ -341,7 +349,7 @@ export default function ConnectFourGame () {
   }, [currentPlayer, gameMode, gameOver]);
 
   // Render game board cell
-  const renderCell = (row, col) => {
+  const renderCell = (row: number, col: number) => {
     const cellValue = board[row][col];
     let cellClass = "w-12 h-12 rounded-full m-1 ";
     
@@ -357,7 +365,7 @@ export default function ConnectFourGame () {
   };
 
   // Render game board column
-  const renderColumn = (col) => {
+  const renderColumn = (col: number) => {
     return (
       <div
         key={col}
@@ -475,4 +483,4 @@ export default function ConnectFourGame () {
       )}
     </div>
   );
-};
+}
