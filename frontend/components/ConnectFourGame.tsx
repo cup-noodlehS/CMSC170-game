@@ -111,7 +111,7 @@ export default function ConnectFourGame () {
       setGameOver(true);
       setWinner(currentPlayer);
       setHighlightWinCells(winningCells);
-      setMessage(`Game over! ${currentPlayer === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} wins!`);
+      setMessage(`Game over! ${currentPlayer === 'X' ? (gameMode === 1 ? "Player 1" : "You") : (gameMode === 1 ? "Player 2" : "AI")} ${currentPlayer === 'X' && gameMode !== 1 ? "win!" : "wins!"}`);
       return true;
     }
     
