@@ -15,8 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "CMSC170 | Connect Four AI",
   description: "CMSC170 | Connect Four AI",
+  openGraph: {
+    images: ['/og-image.png'],
+  },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
